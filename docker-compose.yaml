@@ -1,0 +1,13 @@
+services:
+  connect4:
+    image: "ghcr.io/wri-obernburg/connect4rv6l:main"
+    ports:
+      - "4000:4000"
+      - "3000:3000"
+    environment:
+      - FRONTEND_ADDRESS=https://connect4rv6l.vercel.app/
+    restart: unless-stopped
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://connect4:3000 run --token ${CLOUDFLARED_TOKEN}
+    restart: unless-stopped
