@@ -22,8 +22,7 @@ Dieses Repository enthält die Docker-Compose-Konfiguration und Deployment-Skrip
 - [🔄 Wartung & Updates](#-wartung--updates)
 - [🔒 Sicherheit](#-sicherheit)
 - [Support](#support)
-- [📄 Lizenz](#-lizenz)
-- [👥 Autoren](#-autoren)
+
 
 ## 🎯 Überblick
 
@@ -386,9 +385,6 @@ docker compose up -d
 
 ---
 
-## 📄 Lizenz
-
-Dieses Projekt steht unter der [MIT-Lizenz](https://choosealicense.com/licenses/mit/).
 
 ## 👥 Autoren
 
