@@ -228,20 +228,6 @@ ipconfig | findstr IPv4
 
 > Hinweis (Pfad B): Stellen Sie sicher, dass der Pi auf `eth0` eine statische IP hat, wenn der Roboter direkt per Ethernet verbunden ist.
 
-#### Firewall-Konfiguration
-
-```bash
-# Ubuntu/Debian - Ports öffnen
-sudo ufw allow 3000
-sudo ufw allow 4000  
-sudo ufw allow 8080
-
-# CentOS/RHEL
-sudo firewall-cmd --permanent --add-port=3000/tcp
-sudo firewall-cmd --permanent --add-port=4000/tcp
-sudo firewall-cmd --permanent --add-port=8080/tcp
-sudo firewall-cmd --reload
-```
 
 ## 🎮 Betrieb (Nur Pfad B)
 
