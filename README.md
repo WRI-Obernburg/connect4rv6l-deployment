@@ -43,11 +43,10 @@ Dieses Deployment-Repository stellt eine produktionsreife Docker-Umgebung für d
 ## 🔀 Betriebsmodi (Pfad A/B)
 
 - **Pfad A – Nur Kiosk:** Das Local Frontend (Kiosk) läuft auf einem Displaygerät und verbindet sich mit einem externen Backend.
-  - Aufruf: `http://<backend-host>:4000/localfrontend`
-- **Pfad B – Backend auf dem Pi:** Backend + interne Web-UIs laufen auf einem Raspberry Pi (mDNS-Hostname `rv6l-application.local`).
-  - Aufruf: `http://rv6l-application.local:4000/localfrontend`
 
-> Hinweis: Ersetzen Sie `<backend-host>` durch Hostname oder IP des Backend-Hosts. Im Regelfall sollte dies `rv6l-application.local` sein.
+- **Pfad B – Backend auf dem Pi:** Backend + interne Web-UIs laufen auf einem Raspberry Pi (mDNS-Hostname `rv6l-application.local`).
+
+> Hinweis: Der Backend Pi steuert den RV6L und stellt optional noch ein Display bereit (Pfad B), während bei Pfad A nur das Display angezeigt wird. Daraus ergibt sich, dass immer nur ein Pi mit Pfad B Konfiguration existieren darf, während beliebig viele Pfad A Geräte eingerichtet sein dürfen. Diese müssen dann nur einen anderen Hostname haben!
 
 ## 🔧 Voraussetzungen
 
@@ -85,7 +84,7 @@ sudo raspi-config
 
 #### 2) Installation
 
-Auf Raspberry Pi OS wird Chromium genutzt (Chrome-Äquivalent). Je nach Distribution ist der Paketname unterschiedlich:
+Auf Raspberry Pi OS wird Chromium genutzt (Chrome-Äquivalent).
 
 ```bash
 sudo apt update
@@ -103,7 +102,7 @@ sudo apt-get install --no-install-recommends chromium-browser -y
 #### 3) Kiosk-Autostart einrichten
 
 Ziel-URL des Kiosks:
-- `http://<backend-host>:4000/localfrontend`
+- `http://rv6l-application.local:4000/localfrontend`
 
 Autostart Datei bearbeiten `sudo nano /etc/xdg/openbox/autostart`
 
@@ -351,6 +350,18 @@ ip addr show eth0 | grep inet
 
 
 ## 🔄 Wartung & Updates
+
+# Auf Raspberry Pi aufschalten:
+
+```bash
+ssh wri@<hostname>.local
+
+# Für das Backend
+ssh wri@rv6l-application.local
+
+# Frontend
+-> Hostname im Passwort Dokument im Makerspace Laufwerk nachschlagen
+```
 
 ### Raspberry Pi Herunterfahren
 ```bash
