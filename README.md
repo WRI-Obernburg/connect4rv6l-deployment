@@ -344,12 +344,24 @@ ip addr show eth0 | grep inet
 
 ### Raspberry Pi Herunterfahren
 ```bash
-
+# Nur Pfad B/Backend Pi
 cd connect4rv6l-deployment
 
+# Nur Pfad B/Backend Pi
 docker compose down --rmi 'all'
 
 sudo halt
+
+```
+
+### Raspberry Pi Hochfahren 
+```bash
+
+# Nur Pfad B/Backend Pi
+cd connect4rv6l-deployment
+
+# Nur Pfad B/Backend Pi
+docker compose up
 
 ```
 
