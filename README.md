@@ -105,6 +105,8 @@ cat >> ~/.config/lxsession/LXDE-pi/autostart << 'EOF'
 EOF
 ```
 
+Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
+
 > Ersetzen Sie `<backend-host>` durch `rv6l-application.local` oder die IP/den Host des Backends.
 
 ### Pfad B: Vollständiges Backend (+ optionaler Kiosk Modus)
@@ -201,6 +203,8 @@ cat >> ~/.config/lxsession/LXDE-pi/autostart << 'EOF'
 @chromium-browser --noerrdialogs --disable-infobars --kiosk http://rv6l-application.local:4000/localfrontend
 EOF
 ```
+
+Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
 
 ## ⚙️ Konfiguration
 
