@@ -278,6 +278,9 @@ docker compose logs connect4 --tail 200
 #### ❌ Container startet nicht
 
 ```bash
+# Ins richtige Verzeichnis wechseln
+cd connect4rv6l-deployment
+
 # Logs prüfen
 docker compose logs [service-name]
 
@@ -285,8 +288,8 @@ docker compose logs [service-name]
 ss -tulpn | grep -E ':3000|:4000|:8080'
 
 # Images neu ziehen
-docker compose pull
-docker compose up -d --force-recreate
+docker compose down --rmi 'all'
+docker compose up -d
 ```
 
 #### ❌ WebSocket-Verbindung schlägt fehl
