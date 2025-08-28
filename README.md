@@ -67,6 +67,7 @@ Dieser Modus zeigt nur das lokale Frontend (Kiosk) an und verbindet sich mit ein
 
 - Raspberry Pi Imager laden, Raspberry Pi OS (mit Desktop) auf SD-Karte schreiben.
 - Im Imager „Erweiterte Optionen“ aktivieren: SSH einschalten, Benutzer/Passwort setzen, optional Hostname.
+  Passwort ist auf dem Makerspace Laufwerk im RV6L-Ordner zu finden!
 - Erststart: Mit LAN verbinden oder WLAN über `raspi-config` einrichten.
 
 ```bash
