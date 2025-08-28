@@ -351,7 +351,7 @@ ip addr show eth0 | grep inet
 
 ## 🔄 Wartung & Updates
 
-# Auf Raspberry Pi aufschalten:
+## Auf Raspberry Pi aufschalten:
 
 ```bash
 ssh wri@<hostname>.local
