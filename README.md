@@ -34,7 +34,7 @@ Dieses Deployment-Repository stellt eine produktionsreife Docker-Umgebung für d
 - **Local Display** (integriert)
 - **Cloudflare Tunnel**
 
-  Quicklinks (Production)
+### Quicklinks (Production)
   - [Controlpanel](http://rv6l-application.local:4000/control)
   - [Mobilefrontend](https://connect4rv6l.vercel.app)
   - [Localfrontend](http://rv6l-application.local:4000/localfrontend)
