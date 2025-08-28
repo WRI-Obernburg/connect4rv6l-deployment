@@ -71,27 +71,33 @@ Dieser Modus zeigt nur das lokale Frontend (Kiosk) an und verbindet sich mit ein
 
 #### 1) Raspberry Pi einrichten (Kiosk-Gerät)
 
-- Raspberry Pi Imager laden, Raspberry Pi OS (mit Desktop) auf SD-Karte schreiben.
+- Raspberry Pi Imager laden, Raspberry Pi OS (OHNE Desktop) auf SD-Karte schreiben.
 - Im Imager „Erweiterte Optionen“ aktivieren: SSH einschalten, Benutzer/Passwort setzen, optional Hostname.
   Passwort ist auf dem Makerspace Laufwerk im RV6L-Ordner zu finden!
 - Erststart: Mit LAN verbinden oder WLAN über `raspi-config` einrichten.
+- Nach `sudo raspi-config` unter System -> S6 Auto Login aktivieren
 
 ```bash
 sudo raspi-config
 ```
 
-Empfehlungen: Autologin in Desktop aktivieren (System → Boot/Auto Login), Bildschirm-Standby deaktivieren (optional per Autostart unten).
 
-#### 2) Browser installieren (Chromium/Chrome)
+
+#### 2) Installation
 
 Auf Raspberry Pi OS wird Chromium genutzt (Chrome-Äquivalent). Je nach Distribution ist der Paketname unterschiedlich:
 
 ```bash
 sudo apt update
-# Variante 1 (häufig auf Raspberry Pi OS):
-sudo apt install -y chromium-browser
-# Variante 2 (Debian Bookworm/ähnlich):
-sudo apt install -y chromium
+
+# Desktopumgebung installieren
+sudo apt-get install --no-install-recommends xserver-xorg x11-xserver-utils xinit openbox -y
+
+
+# Chromeium installieren
+sudo apt-get install --no-install-recommends chromium-browser -y
+
+
 ```
 
 #### 3) Kiosk-Autostart einrichten
@@ -99,21 +105,33 @@ sudo apt install -y chromium
 Ziel-URL des Kiosks:
 - `http://<backend-host>:4000/localfrontend`
 
-Autostart für LXDE konfigurieren. Passen Sie ggf. den Browser-Binärnamen von `chromium-browser` auf `chromium` an.
+Autostart Datei bearbeiten `sudo nano /etc/xdg/openbox/autostart`
+
 
 ```bash
-mkdir -p ~/.config/lxsession/LXDE-pi
-cat >> ~/.config/lxsession/LXDE-pi/autostart << 'EOF'
-@xset s off
-@xset -dpms
-@xset s noblank
-@chromium-browser --noerrdialogs --disable-infobars --kiosk http://<backend-host>:4000/localfrontend
-EOF
+# Bildschirmschoner / Bildschirmabschaltung / Energieverwaltung deaktivieren
+
+xset s off
+
+xset s noblank
+
+xset -dpms
+
+# Beenden des X-Servers mit STRG-ALT-Rücktaste erlauben
+
+setxkbmap -option terminate:ctrl_alt_bksp
+
+# Chromium im Kiosk-Modus starten
+
+sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' ~/.config/chromium/'Local State'
+
+sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' ~/.config/chromium/Default/Preferences
+
+chromium-browser --disable-infobars --noerrdialogs --incognito --check-for-update-interval=1 --simulate-critical-update --kiosk 'http://rv6l-application.local:4000/localfrontend'
 ```
 
 Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
 
-> Ersetzen Sie `<backend-host>` durch `rv6l-application.local` oder die IP/den Host des Backends.
 
 ### Pfad B: Vollständiges Backend (+ optionaler Kiosk Modus)
 
@@ -127,7 +145,7 @@ Passwort ist auf dem Makerspace Laufwerk im RV6L-Ordner zu finden.
 
 #### 1) Neuen Raspberry Pi einrichten
 
-- Raspberry Pi Imager herunterladen und SD-Karte schreiben.
+- Raspberry Pi Imager herunterladen (mit Desktop Umgebung!) und SD-Karte schreiben.
 - Im Imager „Erweiterte Optionen“ setzen: SSH aktivieren, Benutzername/Passwort setzen, Hostname `rv6l-application.local`.
 - Mit LAN verbinden, WLAN später über `raspi-config` einrichten (optional).
 - Statische IP für die Roboter-Verbindung an `eth0` setzen (Roboter: `192.168.2.1`, Pi: `192.168.2.2`).
@@ -193,25 +211,14 @@ Auf Raspberry Pi OS wird in der Regel Chromium genutzt (Chrome-Äquivalent). Ins
 
 ```bash
 sudo apt update
-# Variante 1 (häufig auf Raspberry Pi OS):
+
 sudo apt install -y chromium-browser
-# Variante 2 (Debian Bookworm/ähnlich):
-sudo apt install -y chromium
+
 ```
 
 #### 5) Optional: Kiosk Autostart auf dem Pi
 
-Aktivieren Sie den Autostart im Kiosk-Modus auf die lokale Frontend-URL. Ersetzen Sie den Browser-Binärnamen ggf. durch `chromium` statt `chromium-browser`.
-
-```bash
-mkdir -p ~/.config/lxsession/LXDE-pi
-cat >> ~/.config/lxsession/LXDE-pi/autostart << 'EOF'
-@xset s off
-@xset -dpms
-@xset s noblank
-@chromium-browser --noerrdialogs --disable-infobars --kiosk http://rv6l-application.local:4000/localfrontend
-EOF
-```
+TODO muss noch für diese Desktopumgebung Dokumentiert werden!
 
 Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
 
