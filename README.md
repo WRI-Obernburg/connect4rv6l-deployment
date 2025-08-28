@@ -142,6 +142,9 @@ address 192.168.2.2
 netmask 255.255.255.0
 ```
 
+> Hinweis (Pfad B): Stellen Sie in jedem Fall sicher, dass der Pi auf `eth0` eine statische IP hat, wenn der Roboter direkt per Ethernet verbunden ist.
+
+
 ```bash
 # Schnittstelle anwenden
 sudo ifup eth0
@@ -207,6 +210,7 @@ EOF
 Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
 
 ## ⚙️ Konfiguration
+Nur bei Pfad B
 
 ### Umgebungsvariablen
 
@@ -218,19 +222,7 @@ Erstellen Sie eine `.env` Datei oder setzen Sie die Variablen direkt:
 | `CLOUDFLARED_TOKEN` | Token für Cloudflare Tunnel | - | `eyJhIjoiXXX...` |
 
 
-### Netzwerk-Setup
 
-#### Lokales Netzwerk
-
-```bash
-# Host-IP ermitteln
-ip addr show | grep "inet " | grep -v 127.0.0.1
-
-# Oder auf Windows
-ipconfig | findstr IPv4
-```
-
-> Hinweis (Pfad B): Stellen Sie sicher, dass der Pi auf `eth0` eine statische IP hat, wenn der Roboter direkt per Ethernet verbunden ist.
 
 
 ## 🎮 Betrieb (Nur Pfad B)
@@ -375,6 +367,7 @@ docker compose up -d
 - **Interne Ports:** 3000, 4000 nur im lokalen Netzwerk verfügbar
 - **Externe Erreichbarkeit:** Nur über konfigurierten Cloudflare Tunnel
 - **Roboter-Netzwerk:** Isolierte Verbindung zu 192.168.2.1
+- **Abgeschottete Containerarchitektur:** Externe Verbindungen kommen nur im Container an
 
 
 
