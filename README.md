@@ -229,9 +229,19 @@ sudo apt install -y chromium-browser
 
 #### 5) Optional: Kiosk Autostart auf dem Pi
 
-TODO muss noch für diese Desktopumgebung Dokumentiert werden!
+Erstelle `webbrowser.desktop` in `/etc/xdg/autostart/` mit dem Befehl `sudo nano /etc/xdg/autostart/webbrowser.desktop`
 
-Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
+```
+[Desktop Entry]
+Type=Application
+Name=Kiosk Autostart
+Exec=sh -c "unclutter & xscreensaver -no-splash & xset s off & xset -dpms & xset s noblank & chromium-browser http://rv6l-application.local:4000/localfrontend --start-fullscreen --kiosk --incognito --noerrdialogs --no-first-run --disk-cache-dir=/dev/null"
+X-GNOME-Autostart-enabled=true
+```
+
+Erteile die Ausführberechtigung: `sudo chmod +x /etc/xdg/autostart/webbrowser.desktop`
+
+> Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
 
 ## ⚙️ Konfiguration
 Nur bei Pfad B
