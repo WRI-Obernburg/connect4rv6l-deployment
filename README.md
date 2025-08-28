@@ -130,6 +130,17 @@ sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/
 chromium-browser --disable-infobars --noerrdialogs --incognito --check-for-update-interval=1 --simulate-critical-update --kiosk 'http://rv6l-application.local:4000/localfrontend'
 ```
 
+Desktopumgebung starten
+
+
+Am Ende der .profile Datei mit `sudo nano .profile` folgendes hinzufügen.
+
+```bash
+
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor
+
+```
+
 Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
 
 
