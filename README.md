@@ -238,6 +238,8 @@ ipconfig | findstr IPv4
 ### Container starten
 
 ```bash
+cd connect4rv6l-deployment
+
 # Alle Services starten
 docker compose up -d
 
@@ -246,6 +248,8 @@ docker compose up -d
 ### Status überwachen
 
 ```bash
+cd connect4rv6l-deployment
+
 # Container-Status
 docker compose ps
 
@@ -259,6 +263,8 @@ docker stats
 ### Logs einsehen
 
 ```bash
+cd connect4rv6l-deployment
+
 # Alle Logs
 docker compose logs -f
 
@@ -285,12 +291,6 @@ docker compose logs connect4 --tail 200
 ```bash
 # Ins richtige Verzeichnis wechseln
 cd connect4rv6l-deployment
-
-# Logs prüfen
-docker compose logs [service-name]
-
-# Ports prüfen
-ss -tulpn | grep -E ':3000|:4000|:8080'
 
 # Images neu ziehen
 docker compose down --rmi 'all'
@@ -326,19 +326,31 @@ ip addr show eth0 | grep inet
 
 ## 🔄 Wartung & Updates
 
+### Raspberry Pi Herunterfahren
+```bash
+
+cd connect4rv6l-deployment
+
+docker compose down --rmi 'all'
+
+sudo halt
+
+```
+
+
 ### Routine-Updates
 
 ```bash
-# 1. Neueste Images ziehen
-docker compose pull
+
+cd connect4rv6l-deployment
+
+# 1. Service stoppen
+docker compose down --rmi 'all'
 
 # 2. Services mit neuen Images neu starten
 docker compose up -d
 
-# 3. Ungenutzte Images aufräumen
-docker image prune -f
-
-# 4. System-Updates
+# 3. System-Updates
 sudo apt update && sudo apt upgrade -y  # Ubuntu/Debian
 
 ```
@@ -346,8 +358,10 @@ sudo apt update && sudo apt upgrade -y  # Ubuntu/Debian
 ### Komplett-Reset
 
 ```bash
-# ⚠️ ACHTUNG: Löscht alle Container und Volumes
-docker compose down -v
+cd connect4rv6l-deployment
+
+# Container löschen
+docker compose down --rmi 'all'
 
 # Neustart von null
 docker compose up -d
