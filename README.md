@@ -84,19 +84,13 @@ sudo raspi-config
 
 #### 2) Installation
 
-Auf Raspberry Pi OS wird Chromium genutzt (Chrome-Äquivalent).
+Als Browser wird **cog** (WPE WebKit) genutzt. Er zeichnet direkt auf den Bildschirm, ohne X-Server und Desktop, und braucht deutlich weniger Arbeitsspeicher als Chromium. Auf einem Raspberry Pi Zero 2 W (512 MB RAM) ruckelt Chromium, weil das System ständig auf die SD-Karte auslagert. Mit cog läuft die Anzeige flüssig.
 
 ```bash
 sudo apt update
 
-# Desktopumgebung installieren
-sudo apt-get install --no-install-recommends xserver-xorg x11-xserver-utils xinit openbox -y
-
-
-# Chromeium installieren
-sudo apt-get install --no-install-recommends chromium-browser -y
-
-
+# Browser und GPU-Treiber (GLES) installieren
+sudo apt-get install -y --no-install-recommends cog libgles2 libegl1 libegl-mesa0 curl
 ```
 
 #### 3) Kiosk-Autostart einrichten
@@ -104,44 +98,46 @@ sudo apt-get install --no-install-recommends chromium-browser -y
 Ziel-URL des Kiosks:
 - `http://rv6l-application.local:4000/localfrontend`
 
-Autostart Datei bearbeiten `sudo nano /etc/xdg/openbox/autostart`
+Handelt es sich bei dem Monitor um einen Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein `?indoor` an die URL angehängt werden.
 
-
-```bash
-# Bildschirmschoner / Bildschirmabschaltung / Energieverwaltung deaktivieren
-
-xset s off
-
-xset s noblank
-
-xset -dpms
-
-# Beenden des X-Servers mit STRG-ALT-Rücktaste erlauben
-
-setxkbmap -option terminate:ctrl_alt_bksp
-
-# Chromium im Kiosk-Modus starten
-
-sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' ~/.config/chromium/'Local State'
-
-sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' ~/.config/chromium/Default/Preferences
-
-chromium-browser --disable-infobars --noerrdialogs --incognito --check-for-update-interval=1 --simulate-critical-update --kiosk 'http://rv6l-application.local:4000/localfrontend'
-```
-
-Desktopumgebung starten
-
-
-Am Ende der .profile Datei mit `sudo nano .profile` folgendes hinzufügen.
+Startskript anlegen mit `sudo nano /usr/local/bin/kiosk.sh`:
 
 ```bash
+#!/bin/sh
+# Kiosk: zeigt das Local Frontend mit cog (WPE WebKit) direkt auf dem Bildschirm an, ohne X-Server.
+# Wird beim Autologin auf tty1 aus ~/.profile gestartet.
 
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor
+URL='http://rv6l-application.local:4000/localfrontend?indoor'
 
+# 720p reicht für das Display und entlastet die GPU des Pi Zero 2 deutlich
+export COG_PLATFORM_DRM_VIDEO_MODE=1280x720
+export COG_PLATFORM_DRM_CURSOR=0
+
+# Warten, bis das Backend erreichbar ist, sonst bleibt eine Fehlerseite stehen
+until curl -sf -o /dev/null "$URL"; do sleep 3; done
+
+# Bei einem Absturz neu starten; --scale gleicht die 720p aus, damit das Layout wie bei 1080p aussieht
+while true; do
+    cog --platform=drm --platform-params=renderer=gles --scale=0.6667 "$URL"
+    sleep 2
+done
 ```
 
-Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
+Ausführbar machen:
 
+```bash
+sudo chmod 755 /usr/local/bin/kiosk.sh
+```
+
+Am Ende der `.profile` mit `nano ~/.profile` folgendes hinzufügen, damit der Kiosk nach dem Autologin auf dem Bildschirm startet:
+
+```bash
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec /usr/local/bin/kiosk.sh
+```
+
+Danach mit `sudo reboot` neu starten. Nach etwa einer Minute erscheint das Local Frontend.
+
+> Bei einem Monitor mit anderer Auflösung `COG_PLATFORM_DRM_VIDEO_MODE` und `--scale` anpassen. Bei einem 1080p-Modus ist `--scale=1.0` richtig.
 
 ### Pfad B: Vollständiges Backend (+ optionaler Kiosk Modus)
 
@@ -241,6 +237,8 @@ X-GNOME-Autostart-enabled=true
 Erteile die Ausführberechtigung: `sudo chmod +x /etc/xdg/autostart/webbrowser.desktop`
 
 > Handelt es sich bei dem Monitor um ein Indoor-Monitor, muss für die korrekte Spielfeld-Orientierung ein ?indoor an die URL angehängt werden.
+
+> Auf schwacher Hardware (weniger als 1 GB RAM) statt Chromium den cog-Kiosk aus [Pfad A](#pfad-a-nur-kiosk) verwenden.
 
 ## ⚙️ Konfiguration
 Nur bei Pfad B
@@ -346,6 +344,13 @@ ip addr show eth0 | grep inet
 - Kiosk lädt nicht (Pfad A/B):
   - URL korrekt? `<backend-host>` durch tatsächlichen Host ersetzen.
   - Netzwerk/DNS prüfen (Ping auf Hostname/IP testen).
+
+- Kiosk mit cog (Pfad A) zeigt nichts an:
+  - Läuft cog? `pgrep -a cog`
+  - Bleibt der Bildschirm schwarz, wartet das Skript noch auf das Backend. Mit `curl -I 'http://rv6l-application.local:4000/localfrontend'` prüfen, ob es erreichbar ist.
+  - Kiosk neu starten: `pkill cog` (das Skript startet cog nach 2 Sekunden neu) oder `sudo reboot`.
+  - Zum Testen per SSH von Hand starten: Erst den Kiosk mit `sudo systemctl stop getty@tty1` anhalten, dann `COG_PLATFORM_DRM_VIDEO_MODE=1280x720 cog --platform=drm --platform-params=renderer=gles '<URL>'`. Danach mit `sudo systemctl start getty@tty1` den normalen Kiosk wieder starten.
+  - Fehlermeldung `Couldn't open libGLESv2.so.2`: Die GLES-Pakete aus Schritt 2 fehlen.
 
 
 
