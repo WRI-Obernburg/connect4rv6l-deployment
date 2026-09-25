@@ -1,0 +1,3 @@
+
+# fault memory and logs of the backend (volume ./logs)
+logs/

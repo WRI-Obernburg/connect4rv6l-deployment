@@ -6,6 +6,9 @@ services:
       - "3000:3000"
     environment:
       - FRONTEND_ADDRESS=https://connect4rv6l.vercel.app/
+    volumes:
+      # fault memory and logs of the backend, kept when the container is replaced by a new image
+      - ./logs:/app/backend/logs
     restart: unless-stopped
   cloudflared:
     image: cloudflare/cloudflared:latest

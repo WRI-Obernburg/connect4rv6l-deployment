@@ -409,6 +409,10 @@ sudo apt update && sudo apt upgrade -y  # Ubuntu/Debian
 
 ```
 
+### Fehlerspeicher
+
+Der Fehlerspeicher des Backends liegt in `./logs/fault_memory.json` (Volume) und bleibt bei Updates und `docker compose down` erhalten. Offene Einträge werden im Control Panel unter "Fehlerspeicher" quittiert. Zum Leeren die Datei löschen und den Container neu starten.
+
 ### Komplett-Reset
 
 ```bash
