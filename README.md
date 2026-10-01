@@ -251,6 +251,7 @@ Erstellen Sie eine `.env` Datei oder setzen Sie die Variablen direkt:
 |---------------------|-------------|----------|----------|
 | `FRONTEND_ADDRESS`  | Frontend-URL für QR-Codes | `https://connect4rv6l.vercel.app/` | `http://192.168.1.100:8080` |
 | `CLOUDFLARED_TOKEN` | Token für Cloudflare Tunnel | - | `eyJhIjoiXXX...` |
+| `TELEGRAM_BOT_TOKEN` | Telegram-Bot für kritische Fehler, Kontakte werden im Control Panel unter Telegram freigegeben | leer (Bot aus) | `123456:ABC-DEF...` |
 
 
 
